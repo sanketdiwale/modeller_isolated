@@ -1,3 +1,6 @@
+from OpenGL.GL import glMatrixMode,GL_MODELVIEW,GL_PROJECTION,glLoadIdentity,\
+glViewport
+from OpenGL.GLU import gluPerspective, gluUnProject, gluLookAt
 from OpenGL.GLUT import glutGet, glutInit, glutInitDisplayMode, \
                         glutInitWindowSize, glutMainLoop, \
                         GLUT_SINGLE, GLUT_RGB, GLUT_WINDOW_HEIGHT, GLUT_WINDOW_WIDTH,\
@@ -16,8 +19,8 @@ class Camera:
 		
 	def ViewportSetup(self):
 		xSize, ySize = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
-        aspect_ratio = float(xSize) / float(ySize)
-        self.aspect = aspect_ratio
+		aspect_ratio = float(xSize) / float(ySize)
+		self.aspect = aspect_ratio
 		# set up the projection matrix
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
@@ -32,4 +35,3 @@ class Camera:
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
 		gluLookAt(*self.position + self.target + self.up)
-		

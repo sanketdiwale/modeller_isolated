@@ -109,23 +109,14 @@ class Viewer(object):
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
+        tar = self.interaction.LookAttarget;
+        self.Camera.target = (tar[0],tar[1],tar[2])
         if self.CameraMode == 'Trackball':
-            glTranslated(loc[0], loc[1], loc[2])
+            # glTranslated(loc[0], loc[1], loc[2])
             glMultMatrixf(self.interaction.trackball.matrix)
         elif self.CameraMode == 'LookAt':
             # embed()
-            tar = self.interaction.LookAttarget;
-            tar[2] = tar[2]+self.scene.PLACE_DEPTH
-            if tar[0]==0. and tar[1]==0. and tar[2]==0:
-                tar = [0,0,self.scene.PLACE_DEPTH]
-            cam_up = self.interaction.Cam_up;
-            try:
-                # print(loc)
-                # print(tar)
-                gluLookAt(-loc[0], loc[1], -loc[2],-tar[0],tar[1],-tar[2],-cam_up[0],cam_up[1],-cam_up[2])
-            except Exception as e:
-                #raise e
-                pass
+            self.Camera.point()
         else:
             glMultMatrixf(self.interaction.trackball.matrix) # by default revert to trackball if mode is set incorrectly
 
