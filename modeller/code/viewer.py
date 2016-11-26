@@ -9,7 +9,8 @@ from OpenGL.constants import GLfloat_3, GLfloat_4
 from OpenGL.GLU import gluPerspective, gluUnProject
 from OpenGL.GLUT import glutCreateWindow, glutDisplayFunc, glutGet, glutInit, glutInitDisplayMode, \
                         glutInitWindowSize, glutMainLoop, \
-                        GLUT_SINGLE, GLUT_RGB, GLUT_WINDOW_HEIGHT, GLUT_WINDOW_WIDTH
+                        GLUT_SINGLE, GLUT_RGB, GLUT_WINDOW_HEIGHT, GLUT_WINDOW_WIDTH,\
+                        glutDestroyWindow,glutGetWindow
 
 import numpy
 from numpy.linalg import norm, inv
@@ -18,7 +19,7 @@ from interaction import Interaction
 from primitive import init_primitives, G_OBJ_PLANE
 from node import Sphere, Cube, SnowFigure
 from scene import Scene
-
+from IPython import embed
 
 class Viewer(object):
     def __init__(self):
@@ -84,6 +85,7 @@ class Viewer(object):
         self.interaction.register_callback('place', self.place)
         self.interaction.register_callback('rotate_color', self.rotate_color)
         self.interaction.register_callback('scale', self.scale)
+        self.interaction.register_callback('close',self.close)
 
     def main_loop(self):
         glutMainLoop()
@@ -174,6 +176,11 @@ class Viewer(object):
         """ Scale the selected Node. Boolean up indicates scaling larger."""
         self.scene.scale_selected(up)
 
+    def close(self):
+        # embed()
+        glutDestroyWindow(glutGetWindow())
+        embed()
+        exit()
 
 if __name__ == "__main__":
     viewer = Viewer()

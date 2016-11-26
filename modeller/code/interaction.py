@@ -5,7 +5,7 @@ from OpenGL.GLUT import GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, GLUT_MIDDLE_BUTTON,
                         GLUT_WINDOW_HEIGHT, GLUT_WINDOW_WIDTH, \
                         GLUT_DOWN, GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT
 import trackball
-
+from IPython import embed
 
 class Interaction(object):
 
@@ -103,4 +103,7 @@ class Interaction(object):
             self.trigger('rotate_color', forward=True)
         elif key == GLUT_KEY_RIGHT:
             self.trigger('rotate_color', forward=False)
+        elif key == '\033':
+            self.trigger('close')
+            # embed()
         glutPostRedisplay()
