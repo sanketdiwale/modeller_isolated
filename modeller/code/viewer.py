@@ -20,6 +20,7 @@ from primitive import init_primitives, G_OBJ_PLANE
 from node import Sphere, Cube, SnowFigure
 from scene import Scene
 from IPython import embed
+from Camera import Camera
         
 
 class Viewer(object):
@@ -30,7 +31,7 @@ class Viewer(object):
         self.init_scene()
         self.init_camera()
         self.init_interaction()
-        init_primitives()
+        init_primitives() # makes lists of primitive objects defined
 
     def init_interface(self):
         """ initialize the window and register the render function """
@@ -38,7 +39,7 @@ class Viewer(object):
         glutInitWindowSize(640, 480)
         glutCreateWindow("3D Modeller")
         glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB)
-        glutDisplayFunc(self.render)
+        glutDisplayFunc(self.render) # top level render call
 
     def init_opengl(self):
         """ initialize the opengl settings to render the scene """
@@ -51,7 +52,8 @@ class Viewer(object):
         glDepthFunc(GL_LESS)
 
         glEnable(GL_LIGHT0)
-        glLightfv(GL_LIGHT0, GL_POSITION, GLfloat_4(0, 0, 1, 0))
+        # put some initial lighting
+        glLightfv(GL_LIGHT0, GL_POSITION, GLfloat_4(0, 0, 1, 0))  
         glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, GLfloat_3(0, 0, -1))
 
         glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
@@ -60,6 +62,7 @@ class Viewer(object):
 
     def init_camera(self):
         self.CameraMode = 'Trackball';
+        self.Camera = Camera();
 
     def init_scene(self):
         """ initialize the scene object and initial scene """
@@ -106,7 +109,6 @@ class Viewer(object):
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-        loc = self.interaction.translation      
         if self.CameraMode == 'Trackball':
             glTranslated(loc[0], loc[1], loc[2])
             glMultMatrixf(self.interaction.trackball.matrix)
@@ -145,16 +147,16 @@ class Viewer(object):
 
     def init_view(self):
         """ initialize the projection matrix """
-        xSize, ySize = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
-        aspect_ratio = float(xSize) / float(ySize)
-
+        # xSize, ySize = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
+        # aspect_ratio = float(xSize) / float(ySize)
+        self.Camera.ViewportSetup()
         # load the projection matrix. Always the same
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
+        # glMatrixMode(GL_PROJECTION)
+        # glLoadIdentity()
 
-        glViewport(0, 0, xSize, ySize)
-        gluPerspective(70, aspect_ratio, 0.1, 1000.0)
-        glTranslated(0, 0, -15)
+        # glViewport(0, 0, xSize, ySize)
+        # gluPerspective(70, aspect_ratio, 0.1, 1000.0)
+        # glTranslated(0, 0, -15)
 
     def get_ray(self, x, y):
         """ Generate a ray beginning at the near plane, in the direction that the x, y coordinates are facing
