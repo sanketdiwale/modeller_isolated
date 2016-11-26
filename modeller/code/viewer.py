@@ -6,7 +6,7 @@ from OpenGL.GL import glCallList, glClear, glClearColor, glColorMaterial, glCull
                       GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_FRONT_AND_BACK, GL_LESS, GL_LIGHT0, GL_LIGHTING, \
                       GL_MODELVIEW, GL_MODELVIEW_MATRIX, GL_POSITION, GL_PROJECTION, GL_SPOT_DIRECTION
 from OpenGL.constants import GLfloat_3, GLfloat_4
-from OpenGL.GLU import gluPerspective, gluUnProject
+from OpenGL.GLU import gluPerspective, gluUnProject, gluLookAt
 from OpenGL.GLUT import glutCreateWindow, glutDisplayFunc, glutGet, glutInit, glutInitDisplayMode, \
                         glutInitWindowSize, glutMainLoop, \
                         GLUT_SINGLE, GLUT_RGB, GLUT_WINDOW_HEIGHT, GLUT_WINDOW_WIDTH,\
@@ -20,6 +20,7 @@ from primitive import init_primitives, G_OBJ_PLANE
 from node import Sphere, Cube, SnowFigure
 from scene import Scene
 from IPython import embed
+        
 
 class Viewer(object):
     def __init__(self):
@@ -27,6 +28,7 @@ class Viewer(object):
         self.init_interface()
         self.init_opengl()
         self.init_scene()
+        self.init_camera()
         self.init_interaction()
         init_primitives()
 
@@ -56,6 +58,8 @@ class Viewer(object):
         glEnable(GL_COLOR_MATERIAL)
         glClearColor(0.4, 0.4, 0.4, 0.0)
 
+    def init_camera(self):
+        self.CameraMode = 'Trackball';
 
     def init_scene(self):
         """ initialize the scene object and initial scene """
@@ -86,6 +90,7 @@ class Viewer(object):
         self.interaction.register_callback('rotate_color', self.rotate_color)
         self.interaction.register_callback('scale', self.scale)
         self.interaction.register_callback('close',self.close)
+        self.interaction.register_callback('setCameraMode',self.setCameraMode)
 
     def main_loop(self):
         glutMainLoop()
@@ -101,9 +106,26 @@ class Viewer(object):
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-        loc = self.interaction.translation
-        glTranslated(loc[0], loc[1], loc[2])
-        glMultMatrixf(self.interaction.trackball.matrix)
+        loc = self.interaction.translation      
+        if self.CameraMode == 'Trackball':
+            glTranslated(loc[0], loc[1], loc[2])
+            glMultMatrixf(self.interaction.trackball.matrix)
+        elif self.CameraMode == 'LookAt':
+            # embed()
+            tar = self.interaction.LookAttarget;
+            tar[2] = tar[2]+self.scene.PLACE_DEPTH
+            if tar[0]==0. and tar[1]==0. and tar[2]==0:
+                tar = [0,0,self.scene.PLACE_DEPTH]
+            cam_up = self.interaction.Cam_up;
+            try:
+                # print(loc)
+                # print(tar)
+                gluLookAt(-loc[0], loc[1], -loc[2],-tar[0],tar[1],-tar[2],-cam_up[0],cam_up[1],-cam_up[2])
+            except Exception as e:
+                #raise e
+                pass
+        else:
+            glMultMatrixf(self.interaction.trackball.matrix) # by default revert to trackball if mode is set incorrectly
 
         # store the inverse of the current modelview.
         currentModelView = numpy.array(glGetFloatv(GL_MODELVIEW_MATRIX))
@@ -156,7 +178,7 @@ class Viewer(object):
     def pick(self, x, y):
         """ Execute pick of an object. Selects an object in the scene. """
         start, direction = self.get_ray(x, y)
-        self.scene.pick(start, direction, self.modelView)
+        self.interaction.node_selected = self.scene.pick(start, direction, self.modelView)
 
     def place(self, shape, x, y):
         """ Execute a placement of a new primitive into the scene. """
@@ -176,11 +198,14 @@ class Viewer(object):
         """ Scale the selected Node. Boolean up indicates scaling larger."""
         self.scene.scale_selected(up)
 
+    def setCameraMode(self,mode):
+        self.CameraMode = mode;
+
     def close(self):
         # embed()
         glutDestroyWindow(glutGetWindow())
-        embed()
-        exit()
+        # embed()
+        exit() # How do I clean up memory resources before exiting? Is it needed, or handled by destroywindow
 
 if __name__ == "__main__":
     viewer = Viewer()

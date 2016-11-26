@@ -90,7 +90,7 @@ class AABB(object):
             if (-e + aabb_min[2] > 0.0 + EPSILON) or (-e+aabb_max[2] < 0.0 - EPSILON):
                 return False, 0
 
-        return True, tmin
+        return True, tmin#, obb_pos_worldspace
 
     def render(self):
         """ render the AABB. This can be useful for debugging purposes """

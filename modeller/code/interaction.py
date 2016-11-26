@@ -7,6 +7,12 @@ from OpenGL.GLUT import GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, GLUT_MIDDLE_BUTTON,
 import trackball
 from IPython import embed
 
+# class Camera(object):
+#     """Add a general Camera class to abstract out the code"""
+#     def __init__(self):
+#         super(Camera, self).__init__()
+#         self.Cam_up = [0.,1.,0.];
+
 class Interaction(object):
 
     def __init__(self):
@@ -15,13 +21,15 @@ class Interaction(object):
         self.pressed = None
         # the current location of the camera
         self.translation = [0, 0, 0, 0]
+        self.LookAttarget = [0, 0, 0]
+        self.Cam_up = [0, 1, 0]
         # the trackball to calculate rotation
         self.trackball = trackball.Trackball(theta = -25, distance=15)
         # the current mouse location
         self.mouse_loc = None
         # Unsophisticated callback mechanism
         self.callbacks = defaultdict(list)
-        
+        self.node_selected = None
         self.register()
 
     def register(self):
@@ -69,11 +77,17 @@ class Interaction(object):
     def handle_mouse_move(self, x, screen_y):
         """ Called when the mouse is moved """
         xSize, ySize = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
+        if self.node_selected == None:
+            tbc = [0,0,0]
+        else:
+            tbc = self.node_selected.selected_loc;
+        self.LookAttarget = tbc;
         y = ySize - screen_y  # invert the y coordinate because OpenGL is inverted
         if self.pressed is not None:
             dx = x - self.mouse_loc[0]
             dy = y - self.mouse_loc[1]
             if self.pressed == GLUT_RIGHT_BUTTON and self.trackball is not None:
+                self.trackball.setcenter(tbc[0],tbc[1])
                 # ignore the updated camera loc because we want to always rotate around the origin
                 self.trackball.drag_to(self.mouse_loc[0], self.mouse_loc[1], dx, dy)
             elif self.pressed == GLUT_LEFT_BUTTON:
@@ -105,5 +119,10 @@ class Interaction(object):
             self.trigger('rotate_color', forward=False)
         elif key == '\033':
             self.trigger('close')
+        elif key == 'm':
+            self.trigger('setCameraMode','LookAt')
+        elif key == 'n':
+            self.trigger('setCameraMode','Trackball')
+
             # embed()
         glutPostRedisplay()

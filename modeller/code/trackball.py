@@ -188,10 +188,13 @@ class Trackball(object):
 
     def pan_to (self, x, y, dx, dy):
         ''' Pan trackball by a factor dx,dy '''
-        self.x += dx*0.1
-        self.y += dy*0.1
+        # embed()
+        self._x += dx*0.1 # ??? self._x ???
+        self._y += dy*0.1
 
-
+    def setcenter(self,x,y):
+        self._x = x; self._y = y;
+        
     def push(self):
         viewport = gl.glGetIntegerv(gl.GL_VIEWPORT)
         gl.glMatrixMode(gl.GL_PROJECTION)

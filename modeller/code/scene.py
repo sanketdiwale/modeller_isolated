@@ -38,7 +38,7 @@ class Scene(object):
         for node in self.node_list:
             hit, distance = node.pick(start, direction, mat)
             if hit and distance < mindist:
-                mindist, closest_node = distance, node
+                mindist, closest_node  = distance, node 
 
         # If we hit something, keep track of it.
         if closest_node is not None:
@@ -46,6 +46,8 @@ class Scene(object):
             closest_node.depth = mindist
             closest_node.selected_loc = start + direction * mindist
             self.selected_node = closest_node
+
+        return self.selected_node;
 
     def move_selected(self, start, direction, inv_modelview):
         """ Move the selected node, if there is one.
