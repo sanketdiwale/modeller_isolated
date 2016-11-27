@@ -87,7 +87,8 @@ class Interaction(object):
             dx = x - self.mouse_loc[0]
             dy = y - self.mouse_loc[1]
             if self.pressed == GLUT_RIGHT_BUTTON and self.trackball is not None:
-                self.trackball.setcenter(tbc[0],tbc[1])
+                self.trackball.setcenter(tbc[0],tbc[1],tbc[2])
+                # self.trackball.pan_to(tbc[0],tbc[1],dx,dy)
                 # ignore the updated camera loc because we want to always rotate around the origin
                 self.trackball.drag_to(self.mouse_loc[0], self.mouse_loc[1], dx, dy)
             elif self.pressed == GLUT_LEFT_BUTTON:

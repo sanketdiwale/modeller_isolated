@@ -83,7 +83,7 @@ __version__ = '1.0'
 import math
 import OpenGL.GL as gl
 from OpenGL.GL import GLfloat
-
+from IPython import embed
 
 # Some useful functions on vectors
 # -----------------------------------------------------------------------------
@@ -162,6 +162,7 @@ class Trackball(object):
         self._set_orientation(theta,phi)
         self._x = 0.0
         self._y = 0.0
+        self._z = 0.0
 
     def drag_to (self, x, y, dx, dy):
         ''' Move trackball view from x,y to x+dx,y+dy. '''
@@ -192,8 +193,8 @@ class Trackball(object):
         self._x += dx*0.1 # ??? self._x ???
         self._y += dy*0.1
 
-    def setcenter(self,x,y):
-        self._x = x; self._y = y;
+    def setcenter(self,x,y,z):
+        self._x = x; self._y = y; self._z = z
         
     def push(self):
         viewport = gl.glGetIntegerv(gl.GL_VIEWPORT)
@@ -213,7 +214,7 @@ class Trackball(object):
         gl.glPushMatrix()
         gl.glLoadIdentity ()
         # gl.glTranslate (0.0, 0, -self._distance)
-        gl.glTranslate (self._x, self._y, -self._distance)
+        # gl.glTranslate (self._x, self._y, self._z)
         gl.glMultMatrixf (self._matrix)
 
     def pop(void):
@@ -316,8 +317,8 @@ class Trackball(object):
 
         if not dx and not dy:
             return [ 0.0, 0.0, 0.0, 1.0]
-        last = [x, y,       self._project(self._TRACKBALLSIZE, x, y)]
-        new  = [x+dx, y+dy, self._project(self._TRACKBALLSIZE, x+dx, y+dy)]
+        last = [x -self._x, y-self._y,       self._project(self._TRACKBALLSIZE, x, y)-self._z]
+        new  = [x+dx-self._x, y+dy-self._y, self._project(self._TRACKBALLSIZE, x+dx, y+dy)-self._z]
         a = _v_cross(new, last)
         d = _v_sub(last, new)
         t = _v_length(d) / (2.0*self._TRACKBALLSIZE)

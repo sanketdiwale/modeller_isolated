@@ -112,8 +112,13 @@ class Viewer(object):
         tar = self.interaction.LookAttarget;
         self.Camera.target = (tar[0],tar[1],tar[2])
         if self.CameraMode == 'Trackball':
-            loc = self.Camera.position
-            glTranslated(-loc[0], -loc[1], -loc[2])
+            loc = self.Camera.position;
+            # embed()
+            loc0 = loc[0]#+self.interaction.trackball._x
+            loc1 = loc[1]#+self.interaction.trackball._y
+            loc2 = loc[2]#+self.interaction.trackball._z
+            #Camera.position
+            glTranslated(-loc0, -loc1, -loc2)
             glMultMatrixf(self.interaction.trackball.matrix)
         elif self.CameraMode == 'LookAt':
             # embed()
