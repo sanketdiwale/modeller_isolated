@@ -67,7 +67,7 @@ class Viewer(object):
     def init_scene(self):
         """ initialize the scene object and initial scene """
         self.scene = Scene()
-        self.create_sample_scene()
+        # self.create_sample_scene()
 
     def create_sample_scene(self):
         cube_node = Cube()
@@ -92,7 +92,7 @@ class Viewer(object):
         self.interaction.register_callback('place', self.place)
         self.interaction.register_callback('rotate_color', self.rotate_color)
         self.interaction.register_callback('scale', self.scale)
-        self.interaction.register_callback('close',self.close)
+        # self.interaction.register_callback('close',self.close)
         self.interaction.register_callback('setCameraMode',self.setCameraMode)
 
     def main_loop(self):
@@ -200,8 +200,9 @@ class Viewer(object):
         # embed()
         glutDestroyWindow(glutGetWindow())
         # embed()
-        exit() # How do I clean up memory resources before exiting? Is it needed, or handled by destroywindow
+        # exit() # How do I clean up memory resources before exiting? Is it needed, or handled by destroywindow
 
 if __name__ == "__main__":
     viewer = Viewer()
+    viewer.create_sample_scene()
     viewer.main_loop()
