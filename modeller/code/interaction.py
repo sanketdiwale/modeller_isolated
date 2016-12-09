@@ -118,8 +118,8 @@ class Interaction(object):
             self.trigger('rotate_color', forward=True)
         elif key == GLUT_KEY_RIGHT:
             self.trigger('rotate_color', forward=False)
-        # elif key == '\033':
-        #     self.trigger('close')
+        elif key == '\033':
+            self.trigger('close')
         elif key == 'm':
             self.trigger('setCameraMode','LookAt')
         elif key == 'n':

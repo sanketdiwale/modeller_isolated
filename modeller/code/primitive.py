@@ -6,6 +6,8 @@ G_OBJ_PLANE = 1
 G_OBJ_SPHERE = 2
 G_OBJ_CUBE = 3
 
+def GraphicstoGround(p):
+    return (p[0],p[2],-p[1])
 
 def make_plane():
     glNewList(G_OBJ_PLANE, GL_COMPILE)
@@ -36,26 +38,37 @@ def make_plane():
     glBegin(GL_LINES)
     glColor3f(0.5, 0.7, 0.5)
     glVertex3f(0.0, 0.0, 0.0)
-    glVertex3f(0.0, 0.0, 5)
+    glVertex3f(0.0, 0.0, -5)
     glEnd()
 
     # Draw the Y.
     glBegin(GL_LINES)
     glColor3f(0.0, 0.0, 0.0)
-    glVertex3f(0.0, 5.0, 0.0)
-    glVertex3f(0.0, 5.5, 0.0)
-    glVertex3f(0.0, 5.5, 0.0)
-    glVertex3f(-0.5, 6.0, 0.0)
-    glVertex3f(0.0, 5.5, 0.0)
-    glVertex3f(0.5, 6.0, 0.0)
+    p = (0.0, 5.0, 0.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    p = (0.0, 5.5, 0.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    glVertex3f(p1[0], p1[1], p1[2])
+    p = (-0.5, 6.0, 0.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    p = (0.0, 5.5, 0.0);p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    p=(0.5, 6.0, 0.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
 
     # Draw the Z.
-    glVertex3f(-0.5, 0.0, 5.0)
-    glVertex3f(0.5, 0.0, 5.0)
-    glVertex3f(0.5, 0.0, 5.0)
-    glVertex3f(-0.5, 0.0, 6.0)
-    glVertex3f(-0.5, 0.0, 6.0)
-    glVertex3f(0.5, 0.0, 6.0)
+    p = (-0.5, 0.0, 5.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    p = (0.5, 0.0, 5.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    p = (0.5, 0.0, 5.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    p = (-0.5, 0.0, 6.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    p = (-0.5, 0.0, 6.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
+    p = (0.5, 0.0, 6.0); p1 = GraphicstoGround(p)
+    glVertex3f(p1[0], p1[1], p1[2])
 
     # Draw the X.
     glVertex3f(5.0, 0.0, 0.5)

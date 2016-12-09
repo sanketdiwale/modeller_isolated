@@ -21,7 +21,7 @@ from node import Sphere, Cube, SnowFigure
 from scene import Scene
 from IPython import embed
 from Camera import Camera
-        
+import sys
 
 class Viewer(object):
     def __init__(self):
@@ -84,6 +84,9 @@ class Viewer(object):
         hierarchical_node.translate(-2, 0, -2)
         self.scene.add_node(hierarchical_node)
 
+    def create_scene(self):
+        self.create_sample_scene();
+        
     def init_interaction(self):
         """ init user interaction and callbacks """
         self.interaction = Interaction()
@@ -92,7 +95,7 @@ class Viewer(object):
         self.interaction.register_callback('place', self.place)
         self.interaction.register_callback('rotate_color', self.rotate_color)
         self.interaction.register_callback('scale', self.scale)
-        # self.interaction.register_callback('close',self.close)
+        self.interaction.register_callback('close',self.close)
         self.interaction.register_callback('setCameraMode',self.setCameraMode)
 
     def main_loop(self):
@@ -200,7 +203,7 @@ class Viewer(object):
         # embed()
         glutDestroyWindow(glutGetWindow())
         # embed()
-        # exit() # How do I clean up memory resources before exiting? Is it needed, or handled by destroywindow
+        sys.exit() # How do I clean up memory resources before exiting? Is it needed, or handled by destroywindow
 
 if __name__ == "__main__":
     viewer = Viewer()
