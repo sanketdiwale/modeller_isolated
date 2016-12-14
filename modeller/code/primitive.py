@@ -38,7 +38,7 @@ def make_plane():
     glBegin(GL_LINES)
     glColor3f(0.5, 0.7, 0.5)
     glVertex3f(0.0, 0.0, 0.0)
-    glVertex3f(0.0, 0.0, -5)
+    glVertex3f(0.0, 0.0, -5) # y_ground = -z_graphics
     glEnd()
 
     # Draw the Y.

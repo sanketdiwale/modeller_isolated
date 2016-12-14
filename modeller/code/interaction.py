@@ -122,6 +122,8 @@ class Interaction(object):
             self.trigger('close')
         elif key == 'm':
             self.trigger('setCameraMode','LookAt')
+        elif key == ',':
+            self.trigger('setCameraMode','LookAtFollow')
         elif key == 'n':
             self.trigger('setCameraMode','Trackball')
 

@@ -10,7 +10,7 @@ from OpenGL.GLU import gluPerspective, gluUnProject, gluLookAt
 from OpenGL.GLUT import glutCreateWindow, glutDisplayFunc, glutGet, glutInit, glutInitDisplayMode, \
                         glutInitWindowSize, glutMainLoop, \
                         GLUT_SINGLE, GLUT_RGB, GLUT_WINDOW_HEIGHT, GLUT_WINDOW_WIDTH,\
-                        glutDestroyWindow,glutGetWindow
+                        glutDestroyWindow,glutGetWindow, glutPostRedisplay, glutIdleFunc
 
 import numpy
 from numpy.linalg import norm, inv
@@ -22,6 +22,10 @@ from scene import Scene
 from IPython import embed
 from Camera import Camera
 import sys
+from geometry_msgs.msg import PoseStamped
+import rospy
+from IPython import embed
+from transformation import GroundtoGraphics
 
 class Viewer(object):
     def __init__(self):
@@ -32,6 +36,19 @@ class Viewer(object):
         self.init_camera()
         self.init_interaction()
         init_primitives() # makes lists of primitive objects defined
+        self.rosnode = rospy.init_node('viewer', anonymous=False)
+        self.rossub = rospy.Subscriber('/viewer/posetopic', PoseStamped, self.roscallback)
+        self.rate = rospy.Rate(100.);
+
+    def roscallback(self,data):
+        node = self.scene.get_node(data.header.frame_id)
+        # embed()
+        if not node == None:
+            node.set_pose(data.pose.position.x,data.pose.position.y,data.pose.position.z,
+                data.pose.orientation.w,data.pose.orientation.x,data.pose.orientation.y,data.pose.orientation.z)
+            px,py,pz = GroundtoGraphics((data.pose.position.x,data.pose.position.y,data.pose.position.z))
+            self.interaction.LookAttarget = [px,py,pz];
+            glutPostRedisplay()
 
     def init_interface(self):
         """ initialize the window and register the render function """
@@ -40,6 +57,10 @@ class Viewer(object):
         glutCreateWindow("3D Modeller")
         glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB)
         glutDisplayFunc(self.render) # top level render call
+        glutIdleFunc(self.ROSsleep)
+
+    def ROSsleep(self):
+        self.rate.sleep()
 
     def init_opengl(self):
         """ initialize the opengl settings to render the scene """
@@ -61,8 +82,8 @@ class Viewer(object):
         glClearColor(0.4, 0.4, 0.4, 0.0)
 
     def init_camera(self):
-        self.CameraMode = 'Trackball';
         self.Camera = Camera();
+        self.Camera.CameraMode = 'Trackball';       
 
     def init_scene(self):
         """ initialize the scene object and initial scene """
@@ -114,13 +135,16 @@ class Viewer(object):
         glLoadIdentity()
         tar = self.interaction.LookAttarget;
         self.Camera.target = (tar[0],tar[1],tar[2])
-        if self.CameraMode == 'Trackball':
+        if self.Camera.CameraMode == 'Trackball':
             loc = self.Camera.position;
             #Camera.position
             glTranslated(-loc[0], -loc[1], -loc[2])
             glMultMatrixf(self.interaction.trackball.matrix)
-        elif self.CameraMode == 'LookAt':
+        elif self.Camera.CameraMode == 'LookAt':
             # embed()
+            self.Camera.point()
+        elif self.Camera.CameraMode == 'LookAtFollow':
+            self.Camera.follow()
             self.Camera.point()
         else:
             glMultMatrixf(self.interaction.trackball.matrix) # by default revert to trackball if mode is set incorrectly
@@ -188,8 +212,8 @@ class Viewer(object):
         start, direction = self.get_ray(x, y)
         self.scene.move_selected(start, direction, self.inverseModelView)
 
-    # def setPose(self,pose,):
-        
+    # def ROSHandler(self,ind,pose):
+    #     self.scene.set_pose(ind,pose)
 
     def rotate_color(self, forward):
         """ Rotate the color of the selected Node. Boolean 'forward' indicates direction of rotation. """
@@ -200,7 +224,7 @@ class Viewer(object):
         self.scene.scale_selected(up)
 
     def setCameraMode(self,mode):
-        self.CameraMode = mode;
+        self.Camera.CameraMode = mode;
 
     def close(self):
         # embed()

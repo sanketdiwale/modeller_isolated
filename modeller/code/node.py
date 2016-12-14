@@ -5,34 +5,42 @@ import numpy
 
 from primitive import G_OBJ_CUBE, G_OBJ_SPHERE
 from aabb import AABB
-from transformation import scaling, translation
+from transformation import scaling, translation, GroundtoGraphics, rotation,GraphicstoGroundRot
 import color
-
-
+# from IPython import embed
 class Node(object):
     """ Base class for scene elements """
     def __init__(self):
         self.color_index = random.randint(color.MIN_COLOR, color.MAX_COLOR)
         self.aabb = AABB([0.0, 0.0, 0.0], [0.5, 0.5, 0.5])
         self.translation_matrix = numpy.identity(4)
+        self.rotation_matrix = numpy.identity(4)
         self.scaling_matrix = numpy.identity(4)
         self.selected = False
+        self.name = None
 
     def render(self):
         """ renders the item to the screen """
         glPushMatrix()
         glMultMatrixf(numpy.transpose(self.translation_matrix))
+        glMultMatrixf(self.rotation_matrix)
         glMultMatrixf(self.scaling_matrix)
         cur_color = color.COLORS[self.color_index]
         glColor3f(cur_color[0], cur_color[1], cur_color[2])
         if self.selected:  # emit light if the node is selected
-            glMaterialfv(GL_FRONT, GL_EMISSION, [0.3, 0.3, 0.3])
-        
+            glMaterialfv(GL_FRONT, GL_EMISSION, [0.3, 0.3, 0.3])        
         self.render_self()
         if self.selected:
             glMaterialfv(GL_FRONT, GL_EMISSION, [0.0, 0.0, 0.0])
-
         glPopMatrix()
+
+    def set_pose(self,posx,posy,posz,qw,qx,qy,qz):
+        # embed()
+        posx,posy,posz = GroundtoGraphics((posx,posy,posz))
+        R = rotation([qw,qx,qy,qz]); 
+        T = GraphicstoGroundRot();
+        self.translation_matrix = translation([posx, posy, posz])
+        self.rotation_matrix[0:3,0:3] = numpy.dot(R.T,T)
 
     def render_self(self):
         raise NotImplementedError("The Abstract Node Class doesn't define 'render_self'")

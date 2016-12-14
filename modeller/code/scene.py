@@ -19,6 +19,19 @@ class Scene(object):
         """ Add a new node to the scene """
         self.node_list.append(node)
 
+    def get_node(self,name):
+        # ind = 0
+        for node in self.node_list:
+            if node.name == name:
+                return node #ind
+            # else:
+            #     ind = ind + 1;
+        return None
+
+    # def set_pose(self,index,pose):
+    #     node = self.node_list[index];
+    #     node.set_pose(pose);
+
     def render(self):
         """ Render the scene. This function simply calls the render function for each node. """
         for node in self.node_list:
