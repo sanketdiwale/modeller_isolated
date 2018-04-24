@@ -22,8 +22,8 @@ from scene import Scene
 from IPython import embed
 from Camera import Camera
 import sys
-from geometry_msgs.msg import PoseStamped
-import rospy
+# from geometry_msgs.msg import PoseStamped
+# import rospy
 from IPython import embed
 from transformation import GroundtoGraphics
 
@@ -36,19 +36,19 @@ class Viewer(object):
         self.init_camera()
         self.init_interaction()
         init_primitives() # makes lists of primitive objects defined
-        self.rosnode = rospy.init_node('viewer', anonymous=False)
-        self.rossub = rospy.Subscriber('/viewer/posetopic', PoseStamped, self.roscallback)
-        self.rate = rospy.Rate(100.);
+        # self.rosnode = rospy.init_node('viewer', anonymous=False)
+        # self.rossub = rospy.Subscriber('/viewer/posetopic', PoseStamped, self.roscallback)
+        # self.rate = rospy.Rate(100.);
 
-    def roscallback(self,data):
-        node = self.scene.get_node(data.header.frame_id)
-        # embed()
-        if not node == None:
-            node.set_pose(data.pose.position.x,data.pose.position.y,data.pose.position.z,
-                data.pose.orientation.w,data.pose.orientation.x,data.pose.orientation.y,data.pose.orientation.z)
-            px,py,pz = GroundtoGraphics((data.pose.position.x,data.pose.position.y,data.pose.position.z))
-            self.interaction.LookAttarget = [px,py,pz];
-            glutPostRedisplay()
+    # def roscallback(self,data):
+    #     node = self.scene.get_node(data.header.frame_id)
+    #     # embed()
+    #     if not node == None:
+    #         node.set_pose(data.pose.position.x,data.pose.position.y,data.pose.position.z,
+    #             data.pose.orientation.w,data.pose.orientation.x,data.pose.orientation.y,data.pose.orientation.z)
+    #         px,py,pz = GroundtoGraphics((data.pose.position.x,data.pose.position.y,data.pose.position.z))
+    #         self.interaction.LookAttarget = [px,py,pz];
+    #         glutPostRedisplay()
 
     def init_interface(self):
         """ initialize the window and register the render function """
@@ -59,8 +59,8 @@ class Viewer(object):
         glutDisplayFunc(self.render) # top level render call
         glutIdleFunc(self.ROSsleep)
 
-    def ROSsleep(self):
-        self.rate.sleep()
+    # def ROSsleep(self):
+    #     self.rate.sleep()
 
     def init_opengl(self):
         """ initialize the opengl settings to render the scene """
